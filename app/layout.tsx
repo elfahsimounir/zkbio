@@ -1,6 +1,14 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/AppSidebar";
+import { ThemeProvider } from "@/components/theme-provider";
+import { ModeToggle } from "@/components/ui/modeToggle";
+import { Bell } from "lucide-react";
+import Link from "next/link";
+import { NotificationProvider } from "@/utils/notificationContext";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -24,11 +32,40 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning={true} >
+      <head>
+        
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased w-full`}
       >
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <SidebarProvider>
+            <AppSidebar />
+            <main className="w-full  mx-auto p-3 relative">
+              <div className="flex justify-between w-full">
+                <div className="flex gap-2 items-center">
+                  <SidebarTrigger />
+                </div>
+                <div className="flex gap-2 items-center">
+                  <span className="p-2 rounded-md hover:bg-black/5 duration-300 ease-in-out cursor-pointer">
+                    <Bell className="w-5 h-5" />
+                  </span>
+                  <ModeToggle />
+                </div>
+              </div>
+              <NotificationProvider>
+                {children}
+              </NotificationProvider>
+              <Toaster />
+            </main>
+          </SidebarProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
